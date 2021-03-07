@@ -1,4 +1,4 @@
-package server;
+package model;
 
 import javax.swing.*;
 import java.io.Serializable;
@@ -27,6 +27,10 @@ public class Message implements Serializable {
         this.icon = icon;
         this.sender = sender;
         this.recipients = recipients;
+    }
+
+    public User getSender() {
+        return sender;
     }
 
     public String getText() {

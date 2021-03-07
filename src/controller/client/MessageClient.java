@@ -1,7 +1,7 @@
-package client;
+package controller.client;
 
-import server.Message;
-import server.User;
+import model.Message;
+import model.User;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -9,20 +9,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class MessageClient implements Runnable{
+public class MessageClient implements Runnable {
 
     private Socket socket;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private boolean connected;
+    private boolean isAvailable;
 
     public MessageClient (String ipAddress, int port) {
         try {
             socket = new Socket(ipAddress, port);
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
+            isAvailable = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            isAvailable = false;
+            return;
         }
         Thread thread = new Thread(this);
         thread.start();
@@ -30,9 +33,10 @@ public class MessageClient implements Runnable{
 
     @Override
     public void run() {
-        String userName = JOptionPane.showInputDialog("Enter Username");
-        User user = new User(userName);
+
         try {
+            String userName = JOptionPane.showInputDialog("Enter Username");
+            User user = new User(userName);
             oos.writeObject(user);
             oos.flush();
             String response = (String) ois.readObject();
@@ -47,10 +51,9 @@ public class MessageClient implements Runnable{
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             connected = false;
+            return;
         }
-        while (true){
 
-        }
     }
     public void listen() {
         while (true){
@@ -76,5 +79,9 @@ public class MessageClient implements Runnable{
 
     public boolean isConnected() {
         return connected;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
     }
 }
