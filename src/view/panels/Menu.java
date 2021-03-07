@@ -60,8 +60,8 @@ public class Menu extends Viewer {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource().equals(serverBtn)) {
                 if (controller.serverStarts()) {
-                    Viewer server = new ServerLog("Server Log", 600, 400, controller);
-                    server.location(100, 300);
+                    Viewer server = new ServerLog("Server Log", 500, 400, controller);
+                    server.location(0, 300);
                     server.show();
                 }else{
                     JOptionPane.showMessageDialog(null, "Couldn't start server, might already be running.");
@@ -70,8 +70,8 @@ public class Menu extends Viewer {
             if (e.getSource().equals(connectBtn)) {
 
                 if (controller.connect(ip.getText())) {
-                    Viewer cl = new ClientLog("Client Log", 600, 400);
-                    cl.location(1200, 300);
+                    Viewer cl = new ClientLog("Client Log", 500, 400);
+                    cl.location(1040, 300);
                     cl.show();
                 } else {
                     JOptionPane.showMessageDialog(null, "Connection to " + ip.getText() + " failed.");

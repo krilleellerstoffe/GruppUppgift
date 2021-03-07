@@ -7,6 +7,10 @@ import model.LogFileManager;
 import view.Viewer;
 import view.panels.Menu;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.FileSystemNotFoundException;
+
 public class Controller {
 
     private LogFileManager serverFileManager;
@@ -15,8 +19,11 @@ public class Controller {
     private Viewer menu;
 
     public Controller() {
+
         serverFileManager = new LogFileManager("files/log.dat");
-        serverFileManager.addLog("File created.");
+        serverFileManager.addLog("Server started");
+
+
         menu = new Menu("Program Selection Menu", 400, 400, this);
         menu.show();
     }
