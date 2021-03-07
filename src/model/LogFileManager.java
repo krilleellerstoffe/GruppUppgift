@@ -1,4 +1,4 @@
-package server;
+package model;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -38,16 +38,23 @@ public class LogFileManager {
         return logs;
     }
 
-        public synchronized ArrayList<Log> readLogFile(long timeFrom, long timeTill) {
+    public synchronized ArrayList<Log> readLogFile(long timeFrom, long timeTill) {
 
         ArrayList<Log> logs = new ArrayList<>();
-            for (Log log: readLogFile()) {
-                int timeFromComparison = Long.compare(log.getTimeCreated(), timeFrom);
-                int timeTillComparison = Long.compare(log.getTimeCreated(), timeTill);
-                if( timeFromComparison>=0 && timeTillComparison<=0) {
-                    logs.add(log);
-                }
+        for (Log log : readLogFile()) {
+            int timeFromComparison = Long.compare(log.getTimeCreated(), timeFrom);
+            int timeTillComparison = Long.compare(log.getTimeCreated(), timeTill);
+            if (timeFromComparison >= 0 && timeTillComparison <= 0) {
+                logs.add(log);
             }
+        }
         return logs;
+    }
+
+    public ArrayList<String> getStringFormatList() {
+        ArrayList<String> slog = new ArrayList<>();
+        for (Log log : readLogFile())
+        slog.add(log.toString());
+        return slog;
     }
 }
