@@ -1,8 +1,11 @@
 package client;
 
+import view.MainView;
+
 public class StartClient {
 
     public static void main(String[] args) {
-        MessageClient messageClient = new MessageClient("localhost", 2555);
+        new MainView();
+        //MessageClient messageClient = new MessageClient("localhost", 2555);
     }
 }
