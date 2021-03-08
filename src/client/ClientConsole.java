@@ -5,6 +5,7 @@ import model.Message;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,12 +18,13 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
 
   private ClientController controller;
   private Message[] messageList = new Message[100];
-  //private Contact[] contactList = new Contact[100];
   private JFileChooser fileChooser = new JFileChooser();
   private JTextArea inputWindow = new JTextArea("Write a message...");
   private JButton sendButton = new JButton("send");
   private JButton logoutButton = new JButton("log out");
   private JButton addFileButton = new JButton("Add a photo");
+  private JButton addReceiverButton = new JButton("Add a receiver");
+
   private JList messageWindow = new JList();
   private JList contactWindow = new JList();
   private JScrollPane scrollPane = new JScrollPane(messageWindow);
@@ -53,73 +55,97 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     messageWindow.setBackground(new Color(0xECECF3));
     messageWindow.setPreferredSize(new Dimension(100, 100));
     messageWindow.add(scrollPane);
-    scrollPane.setVerticalScrollBarPolicy(
-            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-    //eastPanel.add(contactWindow, BorderLayout.WEST);
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
     eastPanel.add(inputWindow, BorderLayout.SOUTH);
     inputWindow.setVisible(true);
     inputWindow.setRows(3);
 
-    JPanel buttonPanel = new JPanel(new BorderLayout());
-    buttonPanel.setPreferredSize(new Dimension(150, 150));
-    buttonPanel.setLayout(new BorderLayout());
-    buttonPanel.setVisible(true);
-    buttonPanel.add(contactWindow, BorderLayout.CENTER);
-    buttonPanel.add(addFileButton, BorderLayout.PAGE_END);
+    JPanel westPanel = new JPanel(new BorderLayout());
+    westPanel.setPreferredSize(new Dimension(150, 150));
+    westPanel.setLayout(new BorderLayout());
+    westPanel.setVisible(true);
+    westPanel.add(contactWindow, BorderLayout.CENTER);
+
+    eastPanel.add(addFileButton, BorderLayout.EAST);
+    eastPanel.add(addReceiverButton, BorderLayout.NORTH);
+
     contactWindow.setVisible(true);
     contactWindow.setBackground(new Color(0x438F99));
 
-    eastPanel.add(buttonPanel, BorderLayout.WEST);
-    buttonPanel.add(sendButton, BorderLayout.SOUTH);
-    buttonPanel.add(logoutButton, BorderLayout.PAGE_START);
+    eastPanel.add(westPanel, BorderLayout.WEST);
+    westPanel.add(sendButton, BorderLayout.SOUTH);
+    westPanel.add(logoutButton, BorderLayout.PAGE_START);
+
+    ButtonListener listener = new ButtonListener();
+    sendButton.addActionListener(listener);
+    logoutButton.addActionListener(listener);
+    addFileButton.addActionListener(listener);
+
+    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "JPG & GIF Images", "jpg", "gif");
+    fileChooser.setFileFilter(filter);
 
     messageWindow.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
-            inputWindow.setText("");
-            inputWindow.setEditable(true);
-            inputWindow.requestFocus();
+          inputWindow.setText("");
+          inputWindow.setEditable(true);
+          inputWindow.requestFocus();
         }
       }
     });
-
-    updateContacts();
   }
 
   private class ButtonListener implements ActionListener {
+
+    String fileName;
+
     public void actionPerformed(ActionEvent e) {
-      if (e.getSource() == sendButton) {
+      if (e.getSource() == sendButton) { //ska skicka text+bildtext+lista med receivers till controller.
         String text = inputWindow.getText();
-        //hämta även receiver från contactWindow
-      } else if (e.getSource() == logoutButton) { //fungerar ej
+        //String[] receivers = getSelectedContacts();
+        if (fileName != null) {
+          //controller.sendMessage(text, fileName, receivers);
+        }
+        else {
+          //controller.sendMessage(text, receivers);
+          //
+        }
+
+      } else if (e.getSource() == logoutButton) {
         JOptionPane.showMessageDialog(null, "You are now logged out");
         controller.disconnectClient();
+      } else if (e.getSource() == addFileButton) {
+        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+          fileName = fileChooser.getSelectedFile().getPath();
+          JOptionPane.showMessageDialog(null, "Image successfully uploaded");
+        }
+      }
+      else if (e.getSource() == addReceiverButton) {
+        //starta en frame som visar kontakter + onlinekontakter
       }
     }
   }
 
-  public void propertyChange(PropertyChangeEvent evt) {
-    if (evt.getPropertyName().equals("message")) {
-      Message message = (Message) evt.getNewValue();
-      updateMessageWindow(message);
-    } else if (evt.getPropertyName().equals("contact")) {
-      //hämta klient
-    }
-  }
-
-  private void updateMessageWindow(Message message) {
-    for (int i = 0; i < messageList.length; i++) {
-      if (messageList[i] == null) {
-        messageList[i] = message;
+    public void propertyChange(PropertyChangeEvent evt) { //uppdaterar meddelanden.
+      if (evt.getPropertyName().equals("message")) {
+        Message message = (Message) evt.getNewValue();
+        updateMessageWindow(message);
       }
-      messageWindow.setListData(messageList);
+    }
+
+    private void updateMessageWindow(Message message) {
+      for (int i = 0; i < messageList.length; i++) {
+        if (messageList[i] == null) {
+          messageList[i] = message;
+        }
+        messageWindow.setListData(messageList);
+      }
+    }
+
+    private void updateContacts() {
+      //contactList = controller.getContacts();
+      //contactWindow.setListData(contactList);
     }
   }
-
-  private void updateContacts() {
-    //contactList = controller.getContacts();
-    //contactWindow.setListData(contactList);
-  }
-}
