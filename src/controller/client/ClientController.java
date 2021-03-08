@@ -1,6 +1,6 @@
-package client;
+package controller.client;
 
-import server.User;
+import model.User;
 import java.util.ArrayList;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
@@ -16,8 +16,8 @@ public class ClientController {
     private static final String SERVERADDRESS = "localhost";
     private static final int PORT = 2555;
 
-    private static final String FILEPATH_CONTACTS = "LogFile\\contacts.dat";
-    private static final String FILEPATH_CONTACTS_FOLDER = "LogFile";
+    private static final String FILEPATH_CONTACTS = "files\\contacts.dat";
+    private static final String FILEPATH_CONTACTS_FOLDER = "files";
 
     private ArrayList<User> contacts;
     private ArrayList<User> connectedUsers;
