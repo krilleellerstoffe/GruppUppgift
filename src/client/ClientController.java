@@ -26,6 +26,7 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
+    private String userName;
     private ClientConsole ui = new ClientConsole(this);
 
     public ClientController() {
@@ -116,5 +117,15 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
+    }
+
+    public void sendMessage(String text, String fileName, String[] reciever) {
+        //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
+        //messageClient.send(message);
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+
     }
 }
