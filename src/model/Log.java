@@ -1,4 +1,4 @@
-package server;
+package model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -20,6 +20,6 @@ public class Log implements Serializable {
     @Override
     public String toString() {
         Date date = new Date(timeCreated);
-        return date + " " + logText;
+        return "[" + date + "] " + logText;
     }
 }

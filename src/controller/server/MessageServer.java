@@ -1,5 +1,11 @@
-package server;
+package controller.server;
 
+import controller.Controller;
+import model.Message;
+import model.MessageManager;
+import model.User;
+
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,20 +21,25 @@ public class MessageServer implements Runnable{
     ConnectedClients connectedClients;
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private ServerSocket serverSocket;
-    private Thread server = new Thread(this);
+    public Thread server = new Thread(this);
+    private Controller controller;
+    private boolean running;
 
 
-     public MessageServer (MessageManager messageManager, int port) {
-
+     public MessageServer (MessageManager messageManager, int port, Controller controller) {
+         this.controller = controller;
          this.messageManager = messageManager;
          this.connectedClients = new ConnectedClients();
          try {
              serverSocket = new ServerSocket(port);
+             System.out.println(serverSocket + " is now running!");
+             running = true;
          } catch (IOException e) {
-             e.printStackTrace();
+             running = false;
+             return;
          }
-         server.start();
 
+         server.start();
      }
 
     /**
@@ -36,9 +47,6 @@ public class MessageServer implements Runnable{
      */
     @Override
     public void run() {
-
-
-
          while (true) {
              try {
                  Socket socket = serverSocket.accept();
@@ -48,7 +56,7 @@ public class MessageServer implements Runnable{
                  String response = user.getUserName();
                  oos.writeObject(response);
                  oos.flush();
-                 ClientHandler clientHandler = new ClientHandler(ois, oos);
+                 ClientHandler clientHandler = new ClientHandler(ois, oos, controller);
                  connectedClients.put(user, clientHandler);
                  clientHandler.start();
 
@@ -63,9 +71,10 @@ public class MessageServer implements Runnable{
     private class ClientHandler extends Thread {
         private ObjectInputStream ois;
         private ObjectOutputStream oos;
+        private Controller controller;
 
-        public ClientHandler(ObjectInputStream ois, ObjectOutputStream oos) {
-
+        public ClientHandler(ObjectInputStream ois, ObjectOutputStream oos, Controller controller) {
+            this.controller = controller;
             this.ois = ois;
             this.oos = oos;
         }
@@ -77,7 +86,6 @@ public class MessageServer implements Runnable{
                 try {
                     Message message = (Message) ois.readObject();
                     sendToConnectedUsers(message);
-
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -96,6 +104,10 @@ public class MessageServer implements Runnable{
         }
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
     private void sendToConnectedUsers(Message message) {
 
         User[] recipients = message.getRecipients();
@@ -103,14 +115,19 @@ public class MessageServer implements Runnable{
                 ClientHandler clientHandler = connectedClients.get(user);
                 if (clientHandler!=null) {
                     clientHandler.send(message);
+                    propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + ": " + message.getText());
                 }
                 else {
                     messageManager.storeMessage(user, message);
+                    propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + " message stored");
                 }
             }
 
         }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
 
     private class ConnectedClients {
 
