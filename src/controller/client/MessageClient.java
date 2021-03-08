@@ -70,7 +70,7 @@ public class MessageClient implements Runnable {
                     User[] connectedUsers = message.getRecipients();
                     changes.firePropertyChange("ConnectedUsers", null, connectedUsers);
                 }else {
-                    changes.firePropertyChange("Message", null, message);
+                    changes.firePropertyChange("message", null, message);
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
