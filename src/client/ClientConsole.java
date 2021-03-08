@@ -8,10 +8,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -40,10 +37,10 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     setSize(800, 1000);
     setLayout(new BorderLayout());
     setVisible(true);
-    setupWestPanel();
+    setupConsole();
   }
 
-  private void setupWestPanel() {
+  private void setupConsole() {
     JPanel eastPanel = new JPanel(new BorderLayout());
     add(eastPanel, BorderLayout.EAST);
     eastPanel.setPreferredSize(new Dimension(800, 1000));
@@ -63,6 +60,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     eastPanel.add(inputWindow, BorderLayout.SOUTH);
     inputWindow.setVisible(true);
     inputWindow.setRows(3);
+    inputWindow.setForeground(Color.DARK_GRAY);
 
     JPanel westPanel = new JPanel(new BorderLayout());
     westPanel.setPreferredSize(new Dimension(150, 150));
@@ -89,12 +87,14 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
             "JPG, PNG, JPEG & GIF Images", "jpg", "gif", "jpeg", "png");
     fileChooser.setFileFilter(filter);
 
-    messageWindow.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-          inputWindow.setText("");
-          inputWindow.setEditable(true);
-          inputWindow.requestFocus();
+    inputWindow.addFocusListener(new FocusListener() {
+      public void focusGained(FocusEvent e) {
+        inputWindow.setText("");
+      }
+
+      public void focusLost(FocusEvent e) {
+        if (inputWindow.getText() == "") {
+          inputWindow.setText("Write your message here...");
         }
       }
     });
@@ -106,7 +106,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
 
   private class ButtonListener implements ActionListener {
 
-    String fileName;
+    String fileName = null;
     String receivers[];
 
     public void actionPerformed(ActionEvent e) {
@@ -124,7 +124,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
       } else if (e.getSource() == logoutButton) {
         JOptionPane.showMessageDialog(null, "You are now logged out");
         controller.disconnectClient();
-        System.exit(0); //för att stänga av programmet? om det är det vi vill göra.
+        System.exit(0);
       } else if (e.getSource() == addFileButton) {
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
           fileName = fileChooser.getSelectedFile().getPath();
@@ -138,7 +138,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     }
   }
 
-    public void propertyChange(PropertyChangeEvent evt) { //uppdaterar meddelanden.
+    public void propertyChange(PropertyChangeEvent evt) {
       if (evt.getPropertyName().equals("message")) {
         Message message = (Message) evt.getNewValue();
         updateMessageWindow(message);

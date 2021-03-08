@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class ClientLog extends Viewer {
 
     private JPanel panel;
+    private JPanel clientConsole;
 
     public ClientLog(String title, int width, int height) {
         super(title, width, height);
@@ -19,6 +20,7 @@ public class ClientLog extends Viewer {
     @Override
     public JPanel content() {
         panel = new JPanel();
+        //clientConsole = new JPanel();
         panel.setLayout(new BorderLayout());
         update();
         return panel;

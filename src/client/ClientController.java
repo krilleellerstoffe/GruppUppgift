@@ -36,7 +36,7 @@ public class ClientController {
         readContactsFromFile();
         messageClient.setClientController(this);
         JFrame frame = new JFrame();
-        frame.setTitle("Chat console");
+        frame.setTitle("Chat console. Logged in" +userName);
         frame.setBounds(100,100,820,600);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
