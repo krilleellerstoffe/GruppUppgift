@@ -140,6 +140,11 @@ public class MessageServer implements Runnable{
         public synchronized ClientHandler get(User user) {
             return clients.get(user);
         }
+
+        public synchronized void remove (User user) {
+
+            clients.remove(user);
+        }
     }
 
 }
