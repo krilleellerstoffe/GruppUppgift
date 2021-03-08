@@ -56,7 +56,7 @@ public class MessageServer implements Runnable{
                  String response = user.getUserName();
                  oos.writeObject(response);
                  oos.flush();
-                 ClientHandler clientHandler = new ClientHandler(ois, oos, controller);
+                 ClientHandler clientHandler = new ClientHandler(socket, ois, oos, user);
                  connectedClients.put(user, clientHandler);
                  clientHandler.start();
 
@@ -69,27 +69,41 @@ public class MessageServer implements Runnable{
     }
 
     private class ClientHandler extends Thread {
+        private Socket socket;
         private ObjectInputStream ois;
         private ObjectOutputStream oos;
-        private Controller controller;
+        private User user;
 
-        public ClientHandler(ObjectInputStream ois, ObjectOutputStream oos, Controller controller) {
-            this.controller = controller;
+        public ClientHandler(Socket socket, ObjectInputStream ois, ObjectOutputStream oos, User user) {
+            this.socket = socket;
             this.ois = ois;
             this.oos = oos;
+            this.user = user;
         }
 
+        public User getUser() {
+            return user;
+        }
         @Override
         public void run() {
 
+            try {
             while (true) {
-                try {
                     Message message = (Message) ois.readObject();
                     sendToConnectedUsers(message);
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
                 }
-
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if(socket!=null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                connectedClients.remove(user);
+                propertyChangeSupport.firePropertyChange("value", null, user.getUserName() + " disconnected");
             }
         }
 
@@ -135,6 +149,7 @@ public class MessageServer implements Runnable{
 
         public synchronized void put(User user, ClientHandler clientHandler) {
             clients.put(user, clientHandler);
+            sendUserList();
         }
 
         public synchronized ClientHandler get(User user) {
@@ -144,6 +159,19 @@ public class MessageServer implements Runnable{
         public synchronized void remove (User user) {
 
             clients.remove(user);
+            sendUserList();
+        }
+
+        private void sendUserList() {
+
+            User[] connectedUsers = new User[clients.size()];
+            int i = 0;
+            for (ClientHandler cl: clients.values()) {
+                connectedUsers[i] = cl.getUser();
+                i++;
+            }
+            Message message = new Message(connectedUsers);
+            sendToConnectedUsers(message);
         }
     }
 
