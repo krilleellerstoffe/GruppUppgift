@@ -1,7 +1,6 @@
 package client;
 
 import controller.client.MessageClient;
-import model.Message;
 import model.User;
 
 import javax.swing.*;
