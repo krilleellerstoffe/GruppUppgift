@@ -81,6 +81,9 @@ public class MessageServer implements Runnable{
             this.user = user;
         }
 
+        public User getUser() {
+            return user;
+        }
         @Override
         public void run() {
 
@@ -146,6 +149,7 @@ public class MessageServer implements Runnable{
 
         public synchronized void put(User user, ClientHandler clientHandler) {
             clients.put(user, clientHandler);
+            sendUserList();
         }
 
         public synchronized ClientHandler get(User user) {
@@ -155,6 +159,19 @@ public class MessageServer implements Runnable{
         public synchronized void remove (User user) {
 
             clients.remove(user);
+            sendUserList();
+        }
+
+        private void sendUserList() {
+
+            User[] connectedUsers = new User[clients.size()];
+            int i = 0;
+            for (ClientHandler cl: clients.values()) {
+                connectedUsers[i] = cl.getUser();
+                i++;
+            }
+            Message message = new Message(connectedUsers);
+            sendToConnectedUsers(message);
         }
     }
 
