@@ -66,9 +66,11 @@ public class MessageClient implements Runnable {
             try {
                 message = (Message) ois.readObject();
                 if(message.getText().equals("ConnectedUsers")) {
-                    System.out.println("user list");
+                    User[] connectedUsers = message.getRecipients();
+                    changes.firePropertyChange("ConnectedUsers", null, connectedUsers);
+                }else {
+                    changes.firePropertyChange("Message", null, message);
                 }
-                JOptionPane.showMessageDialog(null, message.getText());
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
