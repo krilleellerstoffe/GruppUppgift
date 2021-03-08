@@ -110,6 +110,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
         }
         else {
           //controller.sendMessage(text, receivers);
+          //
         }
 
       } else if (e.getSource() == logoutButton) {
