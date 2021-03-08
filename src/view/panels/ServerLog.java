@@ -6,6 +6,8 @@ import view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
 
     private Controller controller;
     private JPanel panel;
+    private JList log;
+    private JScrollPane logScrollPane;
 
     public ServerLog(String title, int width, int height, Controller controller) {
         super(title, width, height);
@@ -30,16 +34,28 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
     public JPanel content() {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        update();
+        createComponents();
         return panel;
     }
 
-    public void update() {
-        ArrayList<String> test = getServerStringOutputs();
-        JList log = new JList(test.toArray());
+    public void createComponents() {
+        log = new JList();
+        logScrollPane = new JScrollPane(log);
         log.setFont(new Font("Serif", Font.BOLD, 14));
         log.setBackground(Color.lightGray);
-        panel.add(log);
+        panel.add(logScrollPane);
+        updateList();
+    }
+    private void updateList () {
+        log.setListData(getServerStringOutputs().toArray());
+        logScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+                                                                       @Override
+                                                                       public void adjustmentValueChanged(AdjustmentEvent e) {
+                                                                           e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+                                                                       }
+                                                                   }
+        );
+
     }
 
 
@@ -49,7 +65,7 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
             LogFileManager log = controller.getServerFileManager();
 
             log.addLog((String) evt.getNewValue());
-            update();
+            updateList();
 
         }
     }

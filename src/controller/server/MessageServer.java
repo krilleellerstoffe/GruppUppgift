@@ -86,7 +86,6 @@ public class MessageServer implements Runnable{
                 try {
                     Message message = (Message) ois.readObject();
                     sendToConnectedUsers(message);
-                    propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + ": " + message.getText());
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -116,9 +115,11 @@ public class MessageServer implements Runnable{
                 ClientHandler clientHandler = connectedClients.get(user);
                 if (clientHandler!=null) {
                     clientHandler.send(message);
+                    propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + ": " + message.getText());
                 }
                 else {
                     messageManager.storeMessage(user, message);
+                    propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + " message stored");
                 }
             }
 
