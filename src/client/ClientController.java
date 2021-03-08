@@ -2,6 +2,8 @@ package client;
 
 import controller.client.MessageClient;
 import model.User;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
@@ -24,12 +26,21 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
+    private ClientConsole ui = new ClientConsole(this);
 
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
         connectedUsers = new ArrayList<User>();
         contacts = new ArrayList<User>();
         readContactsFromFile();
+        messageClient.setClientController(this);
+        JFrame frame = new JFrame();
+        frame.setTitle("Chat console");
+        frame.setBounds(100,100,820,600);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.add(ui);
+        messageClient.addProperChangeListener(ui);
     }
 
     //Read contacts from file, run on startup.
@@ -101,5 +112,9 @@ public class ClientController {
 
     public static void main(String[] args){
         new ClientController();
+    }
+
+    public void disconnectClient() {
+        messageClient.disconnect();
     }
 }
