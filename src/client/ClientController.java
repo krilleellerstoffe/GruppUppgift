@@ -27,6 +27,7 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
+    private String userName;
     private ClientConsole ui = new ClientConsole(this);
 
     public ClientController() {
