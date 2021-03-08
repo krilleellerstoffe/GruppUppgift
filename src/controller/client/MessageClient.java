@@ -42,6 +42,7 @@ public class MessageClient implements Runnable {
         try {
             String userName = JOptionPane.showInputDialog("Enter Username");
             User user = new User(userName);
+            controller.setUserName(userName);
             oos.writeObject(user);
             oos.flush();
             String response = (String) ois.readObject();

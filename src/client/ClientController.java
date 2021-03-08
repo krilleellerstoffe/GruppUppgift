@@ -1,6 +1,7 @@
 package client;
 
 import controller.client.MessageClient;
+import model.Message;
 import model.User;
 
 import javax.swing.*;
@@ -25,6 +26,7 @@ public class ClientController {
     private ArrayList<User> contacts;
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
+    private String userName;
     public User user;
     private ClientConsole ui = new ClientConsole(this);
 
@@ -116,5 +118,15 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
+    }
+
+    public void sendMessage(String text, String fileName, String[] reciever) {
+        //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
+        //messageClient.send(message);
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+
     }
 }
