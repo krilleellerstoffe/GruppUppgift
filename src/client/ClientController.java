@@ -22,7 +22,7 @@ public class ClientController {
     private static final String FILEPATH_CONTACTS = "LogFile/contacts.dat";
     private static final String FILEPATH_CONTACTS_FOLDER = "LogFile";
 
-    private ArrayList<User> contacts;
+    private ArrayList<Contact> contacts;
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
@@ -32,7 +32,7 @@ public class ClientController {
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
         connectedUsers = new ArrayList<User>();
-        contacts = new ArrayList<User>();
+        contacts = new ArrayList<Contact>();
         readContactsFromFile();
         messageClient.setClientController(this);
         JFrame frame = new JFrame();
@@ -56,8 +56,8 @@ public class ClientController {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(contact));
                 while (true) {
-                    User u = (User) ois.readObject();
-                    contacts.add(u);
+                    Contact c = (Contact) ois.readObject();
+                    contacts.add(c);
 
                 }
             } catch (EOFException EOFE) {
@@ -74,12 +74,12 @@ public class ClientController {
      * Method that writes the contacts to the filepath.
      * @param users
      */
-    public void writeContacts(ArrayList<User> users) {
+    public void writeContacts(ArrayList<Contact> users) {
 
         contacts.clear();
 
-        for (User u : users) {
-            contacts.add(u);
+        for (Contact c : users) {
+            contacts.add(c);
         }
 
         File oldContacts = new File(FILEPATH_CONTACTS);
@@ -87,8 +87,8 @@ public class ClientController {
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FILEPATH_CONTACTS)));
-            for (User u : users) {
-                oos.writeObject(u);
+            for (Contact c : users) {
+                oos.writeObject(c);
             }
             oos.flush();
             oos.close();
@@ -97,17 +97,18 @@ public class ClientController {
         }
     }
 
-    public void updateConnectedList(List<User> list) {
+    public void updateConnectedList(ArrayList<User> users) {
         connectedUsers.clear();
-        for (User u : list) {
+        for (User u : users) {
             connectedUsers.add(u);
         }
+        ui.updateConnectedList(connectedUsers);
     }
 
     public ArrayList<User> getConnectedUsers() {
         return connectedUsers;
     }
-    public ArrayList<User> getContacts() {
+    public ArrayList<Contact> getContacts() {
         return contacts;
     }
 
