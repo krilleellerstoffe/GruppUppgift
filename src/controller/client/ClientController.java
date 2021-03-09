@@ -1,8 +1,8 @@
-package client;
+package controller.client;
 
-import controller.client.MessageClient;
+import model.Message;
 import model.User;
-
+import UI.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.io.BufferedOutputStream;
@@ -12,7 +12,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
 
 public class ClientController {
 
@@ -26,8 +25,8 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
-    private String userName;
-    private ClientConsole ui = new ClientConsole(this);
+    private ClientConsole ui;
+    private UIHandler UI;
 
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
@@ -35,13 +34,8 @@ public class ClientController {
         contacts = new ArrayList<User>();
         readContactsFromFile();
         messageClient.setClientController(this);
-        JFrame frame = new JFrame();
-        frame.setTitle("Chat console");
-        frame.setBounds(100,100,820,600);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.add(ui);
         messageClient.addProperChangeListener(ui);
+        UI = new UIHandler(this);
     }
 
     //Read contacts from file, run on startup.
@@ -56,8 +50,13 @@ public class ClientController {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(contact));
                 while (true) {
+
                     User c = (User) ois.readObject();
                     contacts.add(c);
+
+                    User u = (User) ois.readObject();
+                    contacts.add(u);
+
 
                 }
             } catch (EOFException EOFE) {
@@ -87,8 +86,13 @@ public class ClientController {
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FILEPATH_CONTACTS)));
+
             for (User c : users) {
                 oos.writeObject(c);
+            }
+            for (User u : users) {
+                oos.writeObject(u);
+
             }
             oos.flush();
             oos.close();
@@ -118,15 +122,26 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
+        System.exit(0);
     }
 
-    public void sendMessage(String text, String fileName, String[] reciever) {
-        //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
-        //messageClient.send(message);
+    public void sendMessage(String text, String fileName, String[] recipients) {
+        User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, new ImageIcon(fileName), user, recipientList);
+        messageClient.send(message);
+    }
+    public void sendMessage(String text, String[] recipients) {
+        User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, user, recipientList);
+        messageClient.send(message);
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-
-    }
 }
