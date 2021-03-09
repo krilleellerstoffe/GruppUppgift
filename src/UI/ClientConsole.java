@@ -131,6 +131,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
           JOptionPane.showMessageDialog(null, "Image " + fileChooser.getSelectedFile().getPath() + "successfully uploaded");
         }
       } else if (e.getSource() == addReceiverButton) {
+        new MRecipientsFrame(controller);
       }
     }
   }
