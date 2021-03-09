@@ -1,6 +1,5 @@
 package controller;
 
-
 import controller.client.MessageClient;
 import controller.server.MessageServer;
 import model.MessageManager;
@@ -23,6 +22,7 @@ public class Controller {
 
         serverFileManager = new LogFileManager("files/log.dat");
         serverFileManager.addLog("Server started");
+
 
         menu = new Menu("Program Selection Menu", 400, 400, this);
         menu.show();
