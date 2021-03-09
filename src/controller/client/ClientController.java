@@ -1,8 +1,8 @@
-package client;
+package controller.client;
 
 import controller.client.MessageClient;
 import model.User;
-
+import UI.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.io.BufferedOutputStream;
@@ -22,26 +22,22 @@ public class ClientController {
     private static final String FILEPATH_CONTACTS = "LogFile/contacts.dat";
     private static final String FILEPATH_CONTACTS_FOLDER = "LogFile";
 
-    private ArrayList<Contact> contacts;
+    private ArrayList<User> contacts;
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
     private String userName;
-    private ClientConsole ui = new ClientConsole(this);
+    private ClientConsole ui;
+    private UIHandler UI;
 
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
         connectedUsers = new ArrayList<User>();
-        contacts = new ArrayList<Contact>();
+        contacts = new ArrayList<User>();
         readContactsFromFile();
         messageClient.setClientController(this);
-        JFrame frame = new JFrame();
-        frame.setTitle("Chat console");
-        frame.setBounds(100,100,820,600);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.add(ui);
         messageClient.addProperChangeListener(ui);
+        UI = new UIHandler(this);
     }
 
     //Read contacts from file, run on startup.
@@ -56,8 +52,8 @@ public class ClientController {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(contact));
                 while (true) {
-                    Contact c = (Contact) ois.readObject();
-                    contacts.add(c);
+                    User u = (User) ois.readObject();
+                    contacts.add(u);
 
                 }
             } catch (EOFException EOFE) {
@@ -74,11 +70,11 @@ public class ClientController {
      * Method that writes the contacts to the filepath.
      * @param users
      */
-    public void writeContacts(ArrayList<Contact> users) {
+    public void writeContacts(ArrayList<User> users) {
 
         contacts.clear();
 
-        for (Contact c : users) {
+        for (User c : users) {
             contacts.add(c);
         }
 
@@ -87,8 +83,8 @@ public class ClientController {
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FILEPATH_CONTACTS)));
-            for (Contact c : users) {
-                oos.writeObject(c);
+            for (User u : users) {
+                oos.writeObject(u);
             }
             oos.flush();
             oos.close();
@@ -108,7 +104,7 @@ public class ClientController {
     public ArrayList<User> getConnectedUsers() {
         return connectedUsers;
     }
-    public ArrayList<Contact> getContacts() {
+    public ArrayList<User> getContacts() {
         return contacts;
     }
 
@@ -118,6 +114,11 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
+    }
+
+    public void login(String username, ImageIcon img) {
+        user = new User(username, img);
+      //  MessageServer.connect(user);   // Fixa
     }
 
     public void sendMessage(String text, String fileName, String[] reciever) {

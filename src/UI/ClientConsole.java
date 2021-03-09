@@ -157,7 +157,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
         connectedUsers.clear();
         ArrayList<User> connectedUsers= (ArrayList<User>)evt.getNewValue();
         controller.updateConnectedList(connectedUsers);
-        ArrayList<Contact> contacts = controller.getContacts();
+        ArrayList<User> contacts = controller.getContacts();
       }
     }
 
