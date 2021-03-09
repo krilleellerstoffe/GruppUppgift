@@ -12,8 +12,14 @@ public class Message implements Serializable {
     private long timeReceivedByServer;
     private long timeMessageDelivered;
 
+    public Message(User[] connectedUsers) {
+        this.recipients = connectedUsers;
+        this.text = "ConnectedUsers";
+        this.sender = new User("Server");
 
-    public Message (String text, User sender, User[] recipients) {
+    }
+
+    public Message(String text, User sender, User[] recipients) {
         this.text = text;
         this.sender = sender;
         this.recipients = recipients;

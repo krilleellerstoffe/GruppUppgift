@@ -1,9 +1,12 @@
 package controller.client;
 
+import client.ClientController;
 import model.Message;
 import model.User;
 
 import javax.swing.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,10 +15,12 @@ import java.net.Socket;
 public class MessageClient implements Runnable {
 
     private Socket socket;
+    private ClientController controller;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private boolean connected;
     private boolean isAvailable;
+    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
     public MessageClient (String ipAddress, int port) {
         try {
@@ -37,6 +42,7 @@ public class MessageClient implements Runnable {
         try {
             String userName = JOptionPane.showInputDialog("Enter Username");
             User user = new User(userName);
+            controller.setUserName(userName);
             oos.writeObject(user);
             oos.flush();
             String response = (String) ois.readObject();
@@ -60,7 +66,12 @@ public class MessageClient implements Runnable {
             Message message = null;
             try {
                 message = (Message) ois.readObject();
-                JOptionPane.showMessageDialog(null, message.getText());
+                if(message.getText().equals("ConnectedUsers")) {
+                    User[] connectedUsers = message.getRecipients();
+                    changes.firePropertyChange("connectedUsers", null, connectedUsers);
+                }else {
+                    changes.firePropertyChange("message", null, message);
+                }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -83,5 +94,22 @@ public class MessageClient implements Runnable {
 
     public boolean isAvailable() {
         return isAvailable;
+    }
+
+  public void disconnect() {
+      if (connected) {
+          try {
+              socket.close();
+          } catch (IOException ioException) {
+              ioException.printStackTrace();
+          }
+      }
+  }
+    public void addProperChangeListener(PropertyChangeListener listener) {
+        changes.addPropertyChangeListener(listener);
+    }
+
+    public void setClientController(ClientController controller) {
+        this.controller = controller;
     }
 }
