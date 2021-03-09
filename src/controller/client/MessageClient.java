@@ -68,7 +68,7 @@ public class MessageClient implements Runnable {
                 message = (Message) ois.readObject();
                 if(message.getText().equals("ConnectedUsers")) {
                     User[] connectedUsers = message.getRecipients();
-                    changes.firePropertyChange("ConnectedUsers", null, connectedUsers);
+                    changes.firePropertyChange("connectedUsers", null, connectedUsers);
                 }else {
                     changes.firePropertyChange("message", null, message);
                 }

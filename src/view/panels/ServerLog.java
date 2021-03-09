@@ -48,14 +48,6 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
     }
     private void updateList () {
         log.setListData(getServerStringOutputs().toArray());
-        logScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-                                                                       @Override
-                                                                       public void adjustmentValueChanged(AdjustmentEvent e) {
-                                                                           e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-                                                                       }
-                                                                   }
-        );
-
     }
 
 

@@ -1,7 +1,6 @@
-package controller.client;
+package client;
 
-import UI.ClientConsole;
-import UI.UIHandler;
+import controller.client.MessageClient;
 import model.User;
 
 import javax.swing.*;
@@ -20,27 +19,29 @@ public class ClientController {
     private static final String SERVERADDRESS = "localhost";
     private static final int PORT = 2555;
 
-    private static final String FILEPATH_CONTACTS = "files\\contacts.dat";
-    private static final String FILEPATH_CONTACTS_FOLDER = "files";
+    private static final String FILEPATH_CONTACTS = "LogFile/contacts.dat";
+    private static final String FILEPATH_CONTACTS_FOLDER = "LogFile";
 
-    private ArrayList<User> contacts;
+    private ArrayList<Contact> contacts;
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
     private String userName;
-    private ClientConsole ui;
-    private UIHandler UI;
-
+    private ClientConsole ui = new ClientConsole(this);
 
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
         connectedUsers = new ArrayList<User>();
-        contacts = new ArrayList<User>();
+        contacts = new ArrayList<Contact>();
         readContactsFromFile();
         messageClient.setClientController(this);
+        JFrame frame = new JFrame();
+        frame.setTitle("Chat console");
+        frame.setBounds(100,100,820,600);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.add(ui);
         messageClient.addProperChangeListener(ui);
-        UI = new UIHandler(this);
-
     }
 
     //Read contacts from file, run on startup.
@@ -55,8 +56,8 @@ public class ClientController {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(contact));
                 while (true) {
-                    User u = (User) ois.readObject();
-                    contacts.add(u);
+                    Contact c = (Contact) ois.readObject();
+                    contacts.add(c);
 
                 }
             } catch (EOFException EOFE) {
@@ -73,12 +74,12 @@ public class ClientController {
      * Method that writes the contacts to the filepath.
      * @param users
      */
-    public void writeContacts(ArrayList<User> users) {
+    public void writeContacts(ArrayList<Contact> users) {
 
         contacts.clear();
 
-        for (User u : users) {
-            contacts.add(u);
+        for (Contact c : users) {
+            contacts.add(c);
         }
 
         File oldContacts = new File(FILEPATH_CONTACTS);
@@ -86,8 +87,8 @@ public class ClientController {
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FILEPATH_CONTACTS)));
-            for (User u : users) {
-                oos.writeObject(u);
+            for (Contact c : users) {
+                oos.writeObject(c);
             }
             oos.flush();
             oos.close();
@@ -96,23 +97,18 @@ public class ClientController {
         }
     }
 
-    public void login(String username, ImageIcon img) {
-        user = new User(username, img);
-        //messageClient.connect(user); Här ska man ansluta user till servern
-    }
-
-
-    public void updateConnectedList(List<User> list) {
+    public void updateConnectedList(ArrayList<User> users) {
         connectedUsers.clear();
-        for (User u : list) {
+        for (User u : users) {
             connectedUsers.add(u);
         }
+        ui.updateConnectedList(connectedUsers);
     }
 
     public ArrayList<User> getConnectedUsers() {
         return connectedUsers;
     }
-    public ArrayList<User> getContacts() {
+    public ArrayList<Contact> getContacts() {
         return contacts;
     }
 
@@ -122,7 +118,7 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
- }
+    }
 
     public void sendMessage(String text, String fileName, String[] reciever) {
         //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
