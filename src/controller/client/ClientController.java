@@ -1,6 +1,8 @@
 package controller.client;
 
+import client.ClientConsole;
 import controller.client.MessageClient;
+import model.Message;
 import model.User;
 import UI.*;
 import javax.swing.*;
@@ -26,7 +28,6 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
-    private String userName;
     private ClientConsole ui;
     private UIHandler UI;
 
@@ -114,20 +115,26 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
+        System.exit(0);
     }
 
-    public void login(String username, ImageIcon img) {
-        user = new User(username, img);
-      //  MessageServer.connect(user);   // Fixa
+    public void sendMessage(String text, String fileName, String[] recipients) {
+        User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, new ImageIcon(fileName), user, recipientList);
+        messageClient.send(message);
+    }
+    public void sendMessage(String text, String[] recipients) {
+        User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, user, recipientList);
+        messageClient.send(message);
     }
 
-    public void sendMessage(String text, String fileName, String[] reciever) {
-        //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
-        //messageClient.send(message);
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-
-    }
 }
