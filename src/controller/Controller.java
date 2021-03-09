@@ -2,6 +2,7 @@ package controller;
 
 import controller.client.MessageClient;
 import controller.server.MessageServer;
+import model.Log;
 import model.MessageManager;
 import model.LogFileManager;
 import view.Viewer;
@@ -10,6 +11,7 @@ import view.panels.Menu;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystemNotFoundException;
+import java.util.ArrayList;
 
 public class Controller {
 
@@ -48,6 +50,22 @@ public class Controller {
         }*/
     }
 
+    public ArrayList<String> getStringFormatList(long time) {
+        ArrayList<String> slog = new ArrayList<>();
+        ArrayList<String> all = new ArrayList<>();
+        if (time == 0) {
+            for (Log log : serverFileManager.readLogFile()) {
+                slog.add(log.toString());
+            }
+            return slog;
+        } else {
+            for (Log log : serverFileManager.readLogFile(System.currentTimeMillis() - time, System.currentTimeMillis())) { //tests for logs made within last 10 seconds
+                all.add(log.toString());
+            }
+            return all;
+        }
+    }
+
     public boolean connect(String ip) {
 
         messageClient = new MessageClient(ip, 2555);
@@ -59,5 +77,9 @@ public class Controller {
 
     public LogFileManager getServerFileManager() {
         return serverFileManager;
+    }
+
+    public MessageServer getMessageServer() {
+        return messageServer;
     }
 }

@@ -68,10 +68,10 @@ public class Menu extends Viewer {
                 }
             }
             if (e.getSource().equals(connectBtn)) {
-
                 if (controller.connect(ip.getText())) {
                     Viewer cl = new ClientLog("Client Log", 500, 400);
-                    cl.location(1040, 300);
+                    int x = (Toolkit.getDefaultToolkit().getScreenSize().width-cl.getWidth());
+                    cl.setLocation(x, 300);
                     cl.show();
                 } else {
                     JOptionPane.showMessageDialog(null, "Connection to " + ip.getText() + " failed.");

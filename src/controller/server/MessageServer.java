@@ -59,13 +59,10 @@ public class MessageServer implements Runnable{
                  ClientHandler clientHandler = new ClientHandler(ois, oos, controller);
                  connectedClients.put(user, clientHandler);
                  clientHandler.start();
-
              } catch (IOException | ClassNotFoundException e) {
                  e.printStackTrace();
              }
          }
-
-
     }
 
     private class ClientHandler extends Thread {
@@ -101,7 +98,6 @@ public class MessageServer implements Runnable{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
