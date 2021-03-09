@@ -42,8 +42,10 @@ public class MessageClient implements Runnable {
         try {
             String userName = JOptionPane.showInputDialog("Enter Username");
             User user = new User(userName);
-            controller.setUserName(userName);
+            String profilePicture = JOptionPane.showInputDialog("Chose a profile picture");
+            ImageIcon image = new ImageIcon(profilePicture);
             oos.writeObject(user);
+            oos.writeObject(image);
             oos.flush();
             String response = (String) ois.readObject();
             JOptionPane.showMessageDialog(null, response+ " connected");
