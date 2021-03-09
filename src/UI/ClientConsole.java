@@ -19,7 +19,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
 
   private ClientController controller;
   private ArrayList<User> connectedUsers = new ArrayList<User>();
-  private ArrayList<Contact> contacts = new ArrayList<Contact>();
+  private ArrayList<User> contacts = new ArrayList<User>();
   private JFileChooser fileChooser = new JFileChooser();
   private JTextArea inputWindow = new JTextArea("Write a message...");
   private JButton sendButton = new JButton("send");
@@ -115,16 +115,16 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     String text;
 
     public void actionPerformed(ActionEvent e) {
-      if (e.getSource() == sendButton) { //ska skicka text+bildtext+lista med receivers till controller.
+      if (e.getSource() == sendButton) {
         text = inputWindow.getText();
         if (uploadedFile != null) {
-          //controller.sendMessage(text, uploadedFile, recipients);
+          controller.sendMessage(text, uploadedFile, recipients);
         } else {
-          //controller.sendMessage(text, recipients);
+          controller.sendMessage(text, recipients);
         }
       } else if (e.getSource() == logoutButton) {
         JOptionPane.showMessageDialog(null, "You are now logged out");
-        //controller.disconnectClient();
+        controller.disconnectClient();
       } else if (e.getSource() == addFileButton) {
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
           uploadedFile = fileChooser.getSelectedFile().getPath();
@@ -143,7 +143,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     if (evt.getPropertyName().equals("connectedUsers")) {
       connectedUsers.clear();
       connectedUsers = (ArrayList<User>) evt.getNewValue();
-      //controller.updateConnectedList(connectedUsers);
+      controller.updateConnectedList(connectedUsers);
     }
   }
 
