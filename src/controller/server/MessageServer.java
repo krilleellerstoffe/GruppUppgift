@@ -53,8 +53,8 @@ public class MessageServer implements Runnable{
                  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                  ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                  User user = (User) ois.readObject();
-                 String response = user.getUserName();
-                 oos.writeObject(response);
+                 propertyChangeSupport.firePropertyChange("Value", null, user.getUserName() + "connected");
+                 oos.writeObject("Connected");
                  oos.flush();
                  ClientHandler clientHandler = new ClientHandler(socket, ois, oos, user);
                  connectedClients.put(user, clientHandler);

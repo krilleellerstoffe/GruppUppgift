@@ -2,6 +2,7 @@ package UI;
 
 import controller.client.ClientController;
 import model.Message;
+import model.User;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -29,6 +30,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
   private JList messageWindow = new JList();
   private JList contactWindow = new JList();
   private JScrollPane scrollPane = new JScrollPane(messageWindow);
+  private MRecipientsFrame recipientsFrame;
 
   public ClientConsole(ClientController client) {
     this.controller = client;
@@ -132,7 +134,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
         }
       }
       else if (e.getSource() == addReceiverButton) {
-        new MRecipientsFrame(controller);
+        recipientsFrame = new MRecipientsFrame(controller);
         //starta en frame som visar kontakter + onlinekontakter
       }
     }
@@ -142,6 +144,10 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
       if (evt.getPropertyName().equals("message")) {
         Message message = (Message) evt.getNewValue();
         updateMessageWindow(message);
+      }
+      else if (evt.getPropertyName().equals("ConnectedUsers")) {
+        controller.updateConnectedList((User[]) evt.getNewValue());
+
       }
     }
 

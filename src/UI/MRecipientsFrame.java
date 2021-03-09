@@ -127,7 +127,7 @@ public class MRecipientsFrame extends JFrame {
         panel.add(btnRemove);
     }
 
-    private void initLists() {
+    public void initLists() {
         ArrayList<User> connected = controller.getConnectedUsers();
         ArrayList<User> contacts  = controller.getContacts();
 
