@@ -1,9 +1,11 @@
 package client;
 
 import controller.client.MessageClient;
+import model.Message;
 import model.User;
 
 import javax.swing.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
@@ -26,7 +28,6 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
-    private String userName;
     private ClientConsole ui = new ClientConsole(this);
 
     public ClientController() {
@@ -36,7 +37,7 @@ public class ClientController {
         readContactsFromFile();
         messageClient.setClientController(this);
         JFrame frame = new JFrame();
-        frame.setTitle("Chat console. Logged in" +userName);
+        frame.setTitle("Chat console. Logged in" +user.toString());
         frame.setBounds(100,100,820,600);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -105,9 +106,6 @@ public class ClientController {
         ui.updateConnectedList(connectedUsers);
     }
 
-    public ArrayList<User> getConnectedUsers() {
-        return connectedUsers;
-    }
     public ArrayList<Contact> getContacts() {
         return contacts;
     }
@@ -118,15 +116,25 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
+        System.exit(0);
     }
 
-    public void sendMessage(String text, String fileName, String[] reciever) {
-        //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
-        //messageClient.send(message);
+    public void sendMessage(String text, String fileName, String[] recipients) {
+       User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, new ImageIcon(fileName), user, recipientList);
+        messageClient.send(message);
     }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-
+    public void sendMessage(String text, String[] recipients) {
+        User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, user, recipientList);
+        messageClient.send(message);
     }
 }

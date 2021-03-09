@@ -16,15 +16,14 @@ import java.util.ArrayList;
 public class ClientConsole extends JPanel implements PropertyChangeListener {
 
   private ClientController controller;
-  private Message[] messageList = new Message[100];
+  private ArrayList<User> connectedUsers = new ArrayList<User>();
+  private ArrayList<Contact> contacts = new ArrayList<Contact>();
   private JFileChooser fileChooser = new JFileChooser();
   private JTextArea inputWindow = new JTextArea("Write a message...");
   private JButton sendButton = new JButton("send");
   private JButton logoutButton = new JButton("log out");
   private JButton addFileButton = new JButton("Add a photo");
   private JButton addReceiverButton = new JButton("Add a receiver");
-  private ArrayList<User> connectedUsers = new ArrayList<User>();
-
   private JList messageWindow = new JList();
   private JList contactWindow = new JList();
   private JScrollPane scrollPane = new JScrollPane(messageWindow);
@@ -37,10 +36,12 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     setSize(800, 1000);
     setLayout(new BorderLayout());
     setVisible(true);
-    setupConsole();
+    setupComponents();
+    setupListeners();
+    setupFileChooser();
   }
 
-  private void setupConsole() {
+  private void setupComponents() {
     JPanel eastPanel = new JPanel(new BorderLayout());
     add(eastPanel, BorderLayout.EAST);
     eastPanel.setPreferredSize(new Dimension(800, 1000));
@@ -77,15 +78,14 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     eastPanel.add(westPanel, BorderLayout.WEST);
     westPanel.add(sendButton, BorderLayout.SOUTH);
     westPanel.add(logoutButton, BorderLayout.PAGE_START);
+  }
+
+  private void setupListeners() {
 
     ButtonListener listener = new ButtonListener();
     sendButton.addActionListener(listener);
     logoutButton.addActionListener(listener);
     addFileButton.addActionListener(listener);
-
-    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "JPG, PNG, JPEG & GIF Images", "jpg", "gif", "jpeg", "png");
-    fileChooser.setFileFilter(filter);
 
     inputWindow.addFocusListener(new FocusListener() {
       public void focusGained(FocusEvent e) {
@@ -100,63 +100,68 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     });
   }
 
-  public void updateConnectedList(ArrayList<User> connectedUsers) {
-    this.connectedUsers = connectedUsers;
+  private void setupFileChooser() {
+    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "JPG, PNG, JPEG & GIF Images", "jpg", "gif", "jpeg", "png");
+    fileChooser.setFileFilter(filter);
   }
 
   private class ButtonListener implements ActionListener {
 
-    String fileName = null;
-    String receivers[];
+    String uploadedFile;
+    String recipients[];
+    String text;
 
     public void actionPerformed(ActionEvent e) {
       if (e.getSource() == sendButton) { //ska skicka text+bildtext+lista med receivers till controller.
-        String text = inputWindow.getText();
-        System.out.println(text);
-        if (fileName != null) {
-          //controller.sendMessage(text, fileName, receivers);
+        text = inputWindow.getText();
+        if (uploadedFile != null) {
+          controller.sendMessage(text, uploadedFile, recipients);
+        } else {
+          controller.sendMessage(text, recipients);
         }
-        else {
-          //controller.sendMessage(text, receivers);
-          //
-        }
-
       } else if (e.getSource() == logoutButton) {
         JOptionPane.showMessageDialog(null, "You are now logged out");
         controller.disconnectClient();
-        System.exit(0);
       } else if (e.getSource() == addFileButton) {
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-          fileName = fileChooser.getSelectedFile().getPath();
-          JOptionPane.showMessageDialog(null, "Image "+fileChooser.getSelectedFile().getPath() +"successfully uploaded");
-
+          uploadedFile = fileChooser.getSelectedFile().getPath();
+          JOptionPane.showMessageDialog(null, "Image " + fileChooser.getSelectedFile().getPath() + "successfully uploaded");
         }
-      }
-      else if (e.getSource() == addReceiverButton) {
+      } else if (e.getSource() == addReceiverButton) {
+        updateContacts();
         //starta en frame som visar kontakter + onlinekontakter
       }
     }
   }
 
-    public void propertyChange(PropertyChangeEvent evt) {
-      if (evt.getPropertyName().equals("message")) {
-        Message message = (Message) evt.getNewValue();
-        updateMessageWindow(message);
-      }
-      if (evt.getPropertyName().equals("connectedUsers")) {
-        connectedUsers.clear();
-        ArrayList<User> connectedUsers= (ArrayList<User>)evt.getNewValue();
-        controller.updateConnectedList(connectedUsers);
-        ArrayList<Contact> contacts = controller.getContacts();
-      }
+  public void propertyChange(PropertyChangeEvent evt) {
+    if (evt.getPropertyName().equals("message")) {
+      Message message = (Message) evt.getNewValue();
+      updateMessageWindow(message);
     }
-
-    private void updateMessageWindow(Message message) {
-      for (int i = 0; i < messageList.length; i++) {
-        if (messageList[i] == null) {
-          messageList[i] = message;
-        }
-        messageWindow.setListData(messageList);
-      }
+    if (evt.getPropertyName().equals("connectedUsers")) {
+      connectedUsers.clear();
+      connectedUsers = (ArrayList<User>) evt.getNewValue();
+      controller.updateConnectedList(connectedUsers);
     }
   }
+
+  private void updateMessageWindow(Message message) {
+    Message[] messageList = new Message[100]; //denna ska inte vara 100, vet inte vad jag ska sätta den till.
+    for (int i = 0; i < messageList.length; i++) {
+      if (messageList[i] == null) {
+        messageList[i] = message;
+      }
+      messageWindow.setListData(messageList);
+    }
+  }
+
+  public void updateConnectedList(ArrayList<User> connectedUsers) {
+    this.connectedUsers = connectedUsers;
+  }
+
+  public void updateContacts() {
+    contacts = controller.getContacts();
+  }
+}

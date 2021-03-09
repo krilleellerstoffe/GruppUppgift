@@ -16,7 +16,6 @@ public class ClientLog extends Viewer {
         add(content());
     }
 
-
     @Override
     public JPanel content() {
         panel = new JPanel();
