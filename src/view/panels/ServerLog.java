@@ -29,11 +29,6 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
         add(content());
     }
 
-    public ArrayList<String> getServerStringOutputs(long time) {
-        return controller.getStringFormatList(time);
-    }
-
-
     public JPanel content() {
         panel = new JPanel();
         layout = new BorderLayout();
@@ -41,13 +36,11 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
         update();
         return panel;
     }
+    private JList log;
 
     public void update() {
-        ArrayList<String> test = getServerStringOutputs(time);
-
         ArrayList<String> days = new ArrayList<>();
-        days.add("10000");
-
+        days.add("1000");
 
         JPanel panel1 = new JPanel(new GridLayout(0,6,0,0));
         Action action = new Action();
@@ -60,12 +53,14 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
 
         panel.add(panel1, layout.PAGE_START);
 
-        JList log = new JList(test.toArray());
+        ArrayList<String> test = controller.getStringFormatList(time);
+        log = new JList();
+        log.removeAll();
+        log.setListData(test.toArray());
         log.setFont(new Font("Serif", Font.BOLD, 14));
         log.setBackground(Color.lightGray);
         panel.add(log, layout.PAGE_END);
     }
-
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -83,8 +78,6 @@ public class ServerLog extends Viewer implements PropertyChangeListener {
                 long l = Long.valueOf((String)date.getSelectedItem());
                 time = l;
                 update();
-                System.out.println(time);
-
         }
     }
 }

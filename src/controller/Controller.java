@@ -51,19 +51,23 @@ public class Controller {
     }
 
     public ArrayList<String> getStringFormatList(long time) {
-        ArrayList<String> slog = new ArrayList<>();
-        ArrayList<String> all = new ArrayList<>();
+        ArrayList<String> slog;
         if (time == 0) {
+            slog = new ArrayList<>();
+            System.out.println("Displaying all messages");
             for (Log log : serverFileManager.readLogFile()) {
+                System.out.println(log.toString());
                 slog.add(log.toString());
             }
-            return slog;
         } else {
+            slog = new ArrayList<>();
+            System.out.println("Displaying some messages");
             for (Log log : serverFileManager.readLogFile(System.currentTimeMillis() - time, System.currentTimeMillis())) { //tests for logs made within last 10 seconds
-                all.add(log.toString());
+                System.out.println(log.toString());
+                slog.add(log.toString());
             }
-            return all;
         }
+        return slog;
     }
 
     public boolean connect(String ip) {
