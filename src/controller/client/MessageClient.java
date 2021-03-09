@@ -1,6 +1,6 @@
 package controller.client;
 
-import client.ClientController;
+import controller.client.ClientController;
 import model.Message;
 import model.User;
 
