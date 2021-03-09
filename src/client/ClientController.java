@@ -22,7 +22,7 @@ public class ClientController {
     private static final String FILEPATH_CONTACTS = "LogFile/contacts.dat";
     private static final String FILEPATH_CONTACTS_FOLDER = "LogFile";
 
-    private ArrayList<Contact> contacts;
+    private ArrayList<User> contacts;
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
@@ -32,7 +32,7 @@ public class ClientController {
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
         connectedUsers = new ArrayList<User>();
-        contacts = new ArrayList<Contact>();
+        contacts = new ArrayList<User>();
         readContactsFromFile();
         messageClient.setClientController(this);
         JFrame frame = new JFrame();
@@ -56,7 +56,7 @@ public class ClientController {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(contact));
                 while (true) {
-                    Contact c = (Contact) ois.readObject();
+                    User c = (User) ois.readObject();
                     contacts.add(c);
 
                 }
@@ -74,11 +74,11 @@ public class ClientController {
      * Method that writes the contacts to the filepath.
      * @param users
      */
-    public void writeContacts(ArrayList<Contact> users) {
+    public void writeContacts(ArrayList<User> users) {
 
         contacts.clear();
 
-        for (Contact c : users) {
+        for (User c : users) {
             contacts.add(c);
         }
 
@@ -87,7 +87,7 @@ public class ClientController {
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FILEPATH_CONTACTS)));
-            for (Contact c : users) {
+            for (User c : users) {
                 oos.writeObject(c);
             }
             oos.flush();
@@ -108,7 +108,7 @@ public class ClientController {
     public ArrayList<User> getConnectedUsers() {
         return connectedUsers;
     }
-    public ArrayList<Contact> getContacts() {
+    public ArrayList<User> getContacts() {
         return contacts;
     }
 
