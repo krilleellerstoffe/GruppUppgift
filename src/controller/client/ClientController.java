@@ -1,7 +1,6 @@
 package controller.client;
 
-import UI.ClientConsole;
-import UI.UIHandler;
+import controller.client.MessageClient;
 import model.User;
 import UI.*;
 import javax.swing.*;
@@ -20,8 +19,8 @@ public class ClientController {
     private static final String SERVERADDRESS = "localhost";
     private static final int PORT = 2555;
 
-    private static final String FILEPATH_CONTACTS = "files\\contacts.dat";
-    private static final String FILEPATH_CONTACTS_FOLDER = "files";
+    private static final String FILEPATH_CONTACTS = "LogFile/contacts.dat";
+    private static final String FILEPATH_CONTACTS_FOLDER = "LogFile";
 
     private ArrayList<User> contacts;
     private ArrayList<User> connectedUsers;
@@ -71,12 +70,12 @@ public class ClientController {
      * Method that writes the contacts to the filepath.
      * @param users
      */
-    public void writeContacts(User[] users) {
+    public void writeContacts(ArrayList<User> users) {
 
         contacts.clear();
 
-        for (User u : users) {
-            contacts.add(u);
+        for (User c : users) {
+            contacts.add(c);
         }
 
         File oldContacts = new File(FILEPATH_CONTACTS);
@@ -94,17 +93,12 @@ public class ClientController {
         }
     }
 
-    public void login(String username, ImageIcon img) {
-        user = new User(username, img);
-        //messageClient.connect(user); H�r ska man ansluta user till servern
-    }
-
-
-    public void updateConnectedList(List<User> list) {
+    public void updateConnectedList(ArrayList<User> users) {
         connectedUsers.clear();
-        for (User u : list) {
+        for (User u : users) {
             connectedUsers.add(u);
         }
+        ui.updateConnectedList(connectedUsers);
     }
 
     public ArrayList<User> getConnectedUsers() {
@@ -120,7 +114,7 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
- }
+    }
 
     public void login(String username, ImageIcon img) {
         user = new User(username, img);

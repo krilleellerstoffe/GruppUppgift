@@ -2,6 +2,7 @@ package UI;
 
 import controller.client.ClientController;
 import model.Message;
+import model.User;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -14,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class ClientConsole extends JPanel implements PropertyChangeListener {
 
@@ -25,6 +27,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
   private JButton logoutButton = new JButton("log out");
   private JButton addFileButton = new JButton("Add a photo");
   private JButton addReceiverButton = new JButton("Add a receiver");
+  private ArrayList<User> connectedUsers = new ArrayList<User>();
 
   private JList messageWindow = new JList();
   private JList contactWindow = new JList();
@@ -92,7 +95,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     addReceiverButton.addActionListener(listener);
 
     FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "JPG & GIF Images", "jpg", "gif");
+            "JPG, PNG, JPEG & GIF Images", "jpg", "gif", "jpeg", "png");
     fileChooser.setFileFilter(filter);
 
     messageWindow.addMouseListener(new MouseAdapter() {
@@ -106,14 +109,19 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     });
   }
 
+  public void updateConnectedList(ArrayList<User> connectedUsers) {
+    this.connectedUsers = connectedUsers;
+  }
+
   private class ButtonListener implements ActionListener {
 
     String fileName;
+    String receivers[];
 
     public void actionPerformed(ActionEvent e) {
       if (e.getSource() == sendButton) { //ska skicka text+bildtext+lista med receivers till controller.
         String text = inputWindow.getText();
-        //String[] receivers = getSelectedContacts();
+        System.out.println(text);
         if (fileName != null) {
           //controller.sendMessage(text, fileName, receivers);
         }
@@ -125,10 +133,12 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
       } else if (e.getSource() == logoutButton) {
         JOptionPane.showMessageDialog(null, "You are now logged out");
         controller.disconnectClient();
+        System.exit(0); //för att stänga av programmet? om det är det vi vill göra.
       } else if (e.getSource() == addFileButton) {
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
           fileName = fileChooser.getSelectedFile().getPath();
-          JOptionPane.showMessageDialog(null, "Image successfully uploaded");
+          JOptionPane.showMessageDialog(null, "Image "+fileChooser.getSelectedFile().getPath() +"successfully uploaded");
+
         }
       }
       else if (e.getSource() == addReceiverButton) {
@@ -143,7 +153,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
         Message message = (Message) evt.getNewValue();
         updateMessageWindow(message);
       }
-      else (evt.getPropertyName().equals("connectedUsers")) {
+      if (evt.getPropertyName().equals("connectedUsers")) {
         connectedUsers.clear();
         ArrayList<User> connectedUsers= (ArrayList<User>)evt.getNewValue();
         controller.updateConnectedList(connectedUsers);
@@ -158,10 +168,5 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
         }
         messageWindow.setListData(messageList);
       }
-    }
-
-    private void updateContacts() {
-      //contactList = controller.getContacts();
-      //contactWindow.setListData(contactList);
     }
   }

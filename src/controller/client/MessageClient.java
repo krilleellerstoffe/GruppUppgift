@@ -25,23 +25,10 @@ public class MessageClient implements Runnable {
     public MessageClient (String ipAddress, int port) {
         try {
             socket = new Socket(ipAddress, port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void connect(User user) {
-        try {
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
-            controller.setUserName(user.getUserName());
-            oos.writeObject(user);
-            oos.flush();
             isAvailable = true;
-            String response = (String) ois.readObject();
-            JOptionPane.showMessageDialog(null, response);
-            connected = true;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             isAvailable = false;
             return;
         }
@@ -52,24 +39,44 @@ public class MessageClient implements Runnable {
     @Override
     public void run() {
 
-        while (true) {
-            Message message;
+        try {
+            String userName = JOptionPane.showInputDialog("Enter Username");
+            User user = new User(userName);
+            controller.setUserName(userName);
+            oos.writeObject(user);
+            oos.flush();
+            String response = (String) ois.readObject();
+            JOptionPane.showMessageDialog(null, response+ " connected");
+            connected = true;
+            String input = JOptionPane.showInputDialog("Enter message");
+            String to = JOptionPane.showInputDialog("To whom?");
+            User[] recipients = new User[1];
+            recipients[0] = new User(to);
+            send(new Message(input, user, recipients));
+            listen();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            connected = false;
+            return;
+        }
+
+    }
+    public void listen() {
+        while (true){
+            Message message = null;
             try {
                 message = (Message) ois.readObject();
-                if (message.getSender().getUserName().equals("Server")) {
+                if(message.getText().equals("ConnectedUsers")) {
                     User[] connectedUsers = message.getRecipients();
-                    changes.firePropertyChange("ConnectedUsers", null, connectedUsers);
-                } else {
+                    changes.firePropertyChange("connectedUsers", null, connectedUsers);
+                }else {
                     changes.firePropertyChange("message", null, message);
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
+
         }
-
-    }
-    public void listen() {
-
     }
     public void send (Message message) {
         try {
@@ -98,7 +105,7 @@ public class MessageClient implements Runnable {
           }
       }
   }
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addProperChangeListener(PropertyChangeListener listener) {
         changes.addPropertyChangeListener(listener);
     }
 
