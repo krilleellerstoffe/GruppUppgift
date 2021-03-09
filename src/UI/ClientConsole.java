@@ -1,5 +1,6 @@
-package client;
+package UI;
 
+import controller.client.ClientController;
 import model.Message;
 
 import javax.swing.*;
@@ -41,6 +42,13 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
   }
 
   private void setupWestPanel() {
+    JFrame frame = new JFrame();
+        frame.setTitle("Chat console");
+        frame.setBounds(100,100,820,600);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.add(this);
+
     JPanel eastPanel = new JPanel(new BorderLayout());
     add(eastPanel, BorderLayout.EAST);
     eastPanel.setPreferredSize(new Dimension(800, 1000));
@@ -81,6 +89,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     sendButton.addActionListener(listener);
     logoutButton.addActionListener(listener);
     addFileButton.addActionListener(listener);
+    addReceiverButton.addActionListener(listener);
 
     FileNameExtensionFilter filter = new FileNameExtensionFilter(
             "JPG & GIF Images", "jpg", "gif");
@@ -123,6 +132,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
         }
       }
       else if (e.getSource() == addReceiverButton) {
+        new MRecipientsFrame(controller);
         //starta en frame som visar kontakter + onlinekontakter
       }
     }

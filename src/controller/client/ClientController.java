@@ -1,5 +1,7 @@
 package controller.client;
 
+import UI.ClientConsole;
+import UI.UIHandler;
 import model.User;
 
 import javax.swing.*;
@@ -26,7 +28,9 @@ public class ClientController {
     private MessageClient messageClient;
     public User user;
     private String userName;
-    private ClientConsole ui = new ClientConsole(this);
+    private ClientConsole ui;
+    private UIHandler UI;
+
 
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
@@ -34,13 +38,9 @@ public class ClientController {
         contacts = new ArrayList<User>();
         readContactsFromFile();
         messageClient.setClientController(this);
-        JFrame frame = new JFrame();
-        frame.setTitle("Chat console");
-        frame.setBounds(100,100,820,600);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.add(ui);
         messageClient.addProperChangeListener(ui);
+        UI = new UIHandler(this);
+
     }
 
     //Read contacts from file, run on startup.
@@ -96,6 +96,12 @@ public class ClientController {
         }
     }
 
+    public void login(String username, ImageIcon img) {
+        user = new User(username, img);
+        //messageClient.connect(user); Här ska man ansluta user till servern
+    }
+
+
     public void updateConnectedList(List<User> list) {
         connectedUsers.clear();
         for (User u : list) {
@@ -116,7 +122,7 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
-    }
+ }
 
     public void sendMessage(String text, String fileName, String[] reciever) {
         //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
