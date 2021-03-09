@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 public class ClientController {
 
@@ -37,7 +38,7 @@ public class ClientController {
         contacts = new ArrayList<User>();
         readContactsFromFile();
         messageClient.setClientController(this);
-        messageClient.addPropertyChangeListener(ui);
+        messageClient.addProperChangeListener(ui);
         UI = new UIHandler(this);
 
     }
@@ -97,17 +98,15 @@ public class ClientController {
 
     public void login(String username, ImageIcon img) {
         user = new User(username, img);
-
-        messageClient.connect(user); //Här ska man ansluta user till servern
+        //messageClient.connect(user); Här ska man ansluta user till servern
     }
 
 
-    public void updateConnectedList(User[] list) {
+    public void updateConnectedList(List<User> list) {
         connectedUsers.clear();
         for (User u : list) {
             connectedUsers.add(u);
         }
-        System.out.println(connectedUsers);
     }
 
     public ArrayList<User> getConnectedUsers() {
