@@ -8,10 +8,8 @@ import model.LogFileManager;
 import view.Viewer;
 import view.panels.Menu;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.FileSystemNotFoundException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Controller {
 
@@ -51,23 +49,15 @@ public class Controller {
     }
 
     public ArrayList<String> getStringFormatList(long time) {
-        ArrayList<String> slog;
-        if (time == 0) {
-            slog = new ArrayList<>();
-            System.out.println("Displaying all messages");
-            for (Log log : serverFileManager.readLogFile()) {
-                System.out.println(log.toString());
-                slog.add(log.toString());
-            }
-        } else {
-            slog = new ArrayList<>();
-            System.out.println("Displaying some messages");
-            for (Log log : serverFileManager.readLogFile(System.currentTimeMillis() - time, System.currentTimeMillis())) { //tests for logs made within last 10 seconds
-                System.out.println(log.toString());
-                slog.add(log.toString());
-            }
+        ArrayList<String> messages = new ArrayList<>();
+        for (Log log : serverFileManager.readLogFile(System.currentTimeMillis() - time, System.currentTimeMillis())) { //tests for logs made within last 10 seconds
+            messages.add(log.toString());
         }
-        return slog;
+        return messages;
+    }
+
+    public ArrayList<Date> getLogDates() {
+        return serverFileManager.getLogDates();
     }
 
     public boolean connect(String ip) {
