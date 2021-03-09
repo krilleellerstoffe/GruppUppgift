@@ -143,6 +143,12 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
         Message message = (Message) evt.getNewValue();
         updateMessageWindow(message);
       }
+      else (evt.getPropertyName().equals("connectedUsers")) {
+        connectedUsers.clear();
+        ArrayList<User> connectedUsers= (ArrayList<User>)evt.getNewValue();
+        controller.updateConnectedList(connectedUsers);
+        ArrayList<User> contacts = controller.getContacts();
+      }
     }
 
     private void updateMessageWindow(Message message) {

@@ -3,7 +3,7 @@ package controller.client;
 import UI.ClientConsole;
 import UI.UIHandler;
 import model.User;
-
+import UI.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.io.BufferedOutputStream;
@@ -31,7 +31,6 @@ public class ClientController {
     private ClientConsole ui;
     private UIHandler UI;
 
-
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
         connectedUsers = new ArrayList<User>();
@@ -40,7 +39,6 @@ public class ClientController {
         messageClient.setClientController(this);
         messageClient.addProperChangeListener(ui);
         UI = new UIHandler(this);
-
     }
 
     //Read contacts from file, run on startup.
@@ -73,7 +71,7 @@ public class ClientController {
      * Method that writes the contacts to the filepath.
      * @param users
      */
-    public void writeContacts(ArrayList<User> users) {
+    public void writeContacts(User[] users) {
 
         contacts.clear();
 
@@ -98,7 +96,7 @@ public class ClientController {
 
     public void login(String username, ImageIcon img) {
         user = new User(username, img);
-        //messageClient.connect(user); Här ska man ansluta user till servern
+        //messageClient.connect(user); Hï¿½r ska man ansluta user till servern
     }
 
 
@@ -123,6 +121,11 @@ public class ClientController {
     public void disconnectClient() {
         messageClient.disconnect();
  }
+
+    public void login(String username, ImageIcon img) {
+        user = new User(username, img);
+      //  MessageServer.connect(user);   // Fixa
+    }
 
     public void sendMessage(String text, String fileName, String[] reciever) {
         //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
