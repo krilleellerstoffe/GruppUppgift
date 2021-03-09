@@ -50,11 +50,4 @@ public class LogFileManager {
         }
         return logs;
     }
-
-    public ArrayList<String> getStringFormatList() {
-        ArrayList<String> slog = new ArrayList<>();
-        for (Log log : readLogFile())
-        slog.add(log.toString());
-        return slog;
-    }
 }
