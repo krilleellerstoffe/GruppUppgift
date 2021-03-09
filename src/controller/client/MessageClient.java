@@ -1,6 +1,6 @@
 package controller.client;
 
-import client.ClientController;
+import controller.client.ClientController;
 import model.Message;
 import model.User;
 
@@ -42,10 +42,7 @@ public class MessageClient implements Runnable {
         try {
             String userName = JOptionPane.showInputDialog("Enter Username");
             User user = new User(userName);
-            String profilePicture = JOptionPane.showInputDialog("Chose a profile picture");
-            ImageIcon image = new ImageIcon(profilePicture);
             oos.writeObject(user);
-            oos.writeObject(image);
             oos.flush();
             String response = (String) ois.readObject();
             JOptionPane.showMessageDialog(null, response+ " connected");
@@ -70,7 +67,7 @@ public class MessageClient implements Runnable {
                 message = (Message) ois.readObject();
                 if(message.getText().equals("ConnectedUsers")) {
                     User[] connectedUsers = message.getRecipients();
-                    changes.firePropertyChange("ConnectedUsers", null, connectedUsers);
+                    changes.firePropertyChange("connectedUsers", null, connectedUsers);
                 }else {
                     changes.firePropertyChange("message", null, message);
                 }

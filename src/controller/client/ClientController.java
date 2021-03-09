@@ -1,8 +1,10 @@
-package client;
+package controller.client;
 
+import client.ClientConsole;
 import controller.client.MessageClient;
+import model.Message;
 import model.User;
-
+import UI.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.io.BufferedOutputStream;
@@ -26,8 +28,8 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
-    private String userName;
-    private ClientConsole ui = new ClientConsole(this);
+    private ClientConsole ui;
+    private UIHandler UI;
 
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
@@ -35,13 +37,8 @@ public class ClientController {
         contacts = new ArrayList<User>();
         readContactsFromFile();
         messageClient.setClientController(this);
-        JFrame frame = new JFrame();
-        frame.setTitle("Chat console");
-        frame.setBounds(100,100,820,600);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.add(ui);
         messageClient.addProperChangeListener(ui);
+        UI = new UIHandler(this);
     }
 
     //Read contacts from file, run on startup.
@@ -78,8 +75,8 @@ public class ClientController {
 
         contacts.clear();
 
-        for (User u : users) {
-            contacts.add(u);
+        for (User c : users) {
+            contacts.add(c);
         }
 
         File oldContacts = new File(FILEPATH_CONTACTS);
@@ -97,11 +94,12 @@ public class ClientController {
         }
     }
 
-    public void updateConnectedList(List<User> list) {
+    public void updateConnectedList(ArrayList<User> users) {
         connectedUsers.clear();
-        for (User u : list) {
+        for (User u : users) {
             connectedUsers.add(u);
         }
+        ui.updateConnectedList(connectedUsers);
     }
 
     public ArrayList<User> getConnectedUsers() {
@@ -117,14 +115,26 @@ public class ClientController {
 
     public void disconnectClient() {
         messageClient.disconnect();
+        System.exit(0);
     }
 
-    public void sendMessage(String text, String fileName, String[] reciever) {
-        //Message message = new Message(text, new ImageIcon(fileName), reciever, userName);
-        //messageClient.send(message);
+    public void sendMessage(String text, String fileName, String[] recipients) {
+        User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, new ImageIcon(fileName), user, recipientList);
+        messageClient.send(message);
+    }
+    public void sendMessage(String text, String[] recipients) {
+        User[] recipientList = new User[100];
+        for (int i = 0; i < recipients.length; i++) {
+            User u = new User(recipients[i]);
+            recipientList[i] = u;
+        }
+        Message message = new Message(text, user, recipientList);
+        messageClient.send(message);
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 }
