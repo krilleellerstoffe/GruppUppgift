@@ -1,10 +1,9 @@
 package controller.server;
 
-import controller.server.MessageServer;
 import model.MessageManager;
 import model.LogFileManager;
-import view.Viewer;
-import view.panels.Menu;
+import view.server.Viewer;
+import view.server.Menu;
 
 
 public class ServerController {
@@ -18,7 +17,7 @@ public class ServerController {
         serverFileManager = new LogFileManager("files/log.dat");
         serverFileManager.addLog("Server started");
 
-        menu = new Menu("Program Selection Menu", 400, 400, this);
+        menu = new Menu("Program Selection Menu", 200, 100, this);
         menu.setVisible(true);
     }
 
@@ -27,7 +26,7 @@ public class ServerController {
     }
 
     public boolean serverStarts() {
-        messageServer = new MessageServer(new MessageManager(), 2555, this);
+        messageServer = new MessageServer(new MessageManager(), 2555);
 
         if (messageServer.isRunning()) {
             return true;

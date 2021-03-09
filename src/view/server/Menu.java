@@ -1,7 +1,6 @@
-package view.panels;
+package view.server;
 
 import controller.server.ServerController;
-import view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +11,7 @@ public class Menu extends Viewer {
 
     private JTextField ip;
     private JButton serverBtn;
-    private JButton connectBtn;
+    private JButton stopServerBtn;
     private ServerController controller;
 
     public Menu(String title, int width, int height, ServerController controller) {
@@ -27,16 +26,19 @@ public class Menu extends Viewer {
         JPanel panel = new JPanel();
         panel.setBackground(Color.white);
         JPanel inner = new JPanel();
-        inner.setLayout(new GridLayout(3,1,0,0));
 
-        inner.setPreferredSize(new Dimension(150,100));
-
-        ip = new JTextField();
-        ip.setText("localhost");
-        ip.setHorizontalAlignment(JTextField.CENTER);
+        inner.setPreferredSize(new Dimension(200,100));
 
         serverBtn = new JButton("Run Server");
-        serverBtn.addActionListener(action);
+        serverBtn.addActionListener(e -> {
+            if (controller.serverStarts()) {
+                Viewer server = new ServerLog("Server Log", 500, 400, controller);
+                server.location(0, 300);
+                server.setVisible(true);
+            }else{
+                JOptionPane.showMessageDialog(null, "Couldn't start server, might already be running.");
+            }
+        });
         inner.add(serverBtn);
 
         panel.add(inner, BorderLayout.SOUTH);

@@ -1,4 +1,4 @@
-package UI.client;
+package view.client;
 
 import controller.client.ClientController;
 import model.Message;

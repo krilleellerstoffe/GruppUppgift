@@ -22,18 +22,20 @@ public class MessageClient implements Runnable {
     private ObjectInputStream ois;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private User user;
+    private String ipAddress;
+    private int port;
 
     public MessageClient (String ipAddress, int port) {
-        try {
-            socket = new Socket(ipAddress, port);
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            ois = new ObjectInputStream(socket.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        this.ipAddress = ipAddress;
+        this.port = port;
     }
 
-    public void connect(User user) {
+    public void connect(User user) throws IOException {
+
+        socket = new Socket(ipAddress, port);
+        oos = new ObjectOutputStream(socket.getOutputStream());
+        ois = new ObjectInputStream(socket.getInputStream());
         this.user = user;
         thread.start();
     }
@@ -90,7 +92,7 @@ public class MessageClient implements Runnable {
           }
       }
   }
-    public void addProperChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         changes.addPropertyChangeListener(listener);
     }
 

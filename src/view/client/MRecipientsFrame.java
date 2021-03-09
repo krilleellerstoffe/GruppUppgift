@@ -1,4 +1,4 @@
-package UI.client;
+package view.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

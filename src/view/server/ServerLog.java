@@ -1,8 +1,7 @@
-package view.panels;
+package view.server;
 
 import controller.server.ServerController;
 import model.LogFileManager;
-import view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;

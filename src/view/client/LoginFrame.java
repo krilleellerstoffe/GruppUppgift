@@ -1,4 +1,4 @@
-package UI.client;
+package view.client;
 
 import java.awt.Color;
 import java.awt.Font;

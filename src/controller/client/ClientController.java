@@ -1,7 +1,7 @@
 package controller.client;
 
-import UI.client.ClientConsole;
-import UI.client.UIHandler;
+import view.client.ClientConsole;
+import view.client.UIHandler;
 import model.Message;
 import model.User;
 
@@ -36,7 +36,7 @@ public class ClientController {
         contacts = new ArrayList<User>();
         readContactsFromFile();
         messageClient.setClientController(this);
-        messageClient.addProperChangeListener(ui);
+        messageClient.addPropertyChangeListener(ui);
         UI = new UIHandler(this);
     }
 

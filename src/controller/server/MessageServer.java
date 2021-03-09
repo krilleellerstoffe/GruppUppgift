@@ -21,12 +21,10 @@ public class MessageServer implements Runnable{
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private ServerSocket serverSocket;
     public Thread server = new Thread(this);
-    private ServerController controller;
     private boolean running;
 
 
-     public MessageServer (MessageManager messageManager, int port, ServerController controller) {
-         this.controller = controller;
+     public MessageServer (MessageManager messageManager, int port) {
          this.messageManager = messageManager;
          this.connectedClients = new ConnectedClients();
          try {
