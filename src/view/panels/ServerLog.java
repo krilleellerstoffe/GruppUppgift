@@ -1,25 +1,23 @@
 package view.panels;
 
-import controller.Controller;
+import controller.server.ServerController;
 import model.LogFileManager;
 import view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class ServerLog extends Viewer implements PropertyChangeListener {
 
-    private Controller controller;
+    private ServerController controller;
     private JPanel panel;
     private JList log;
     private JScrollPane logScrollPane;
 
-    public ServerLog(String title, int width, int height, Controller controller) {
+    public ServerLog(String title, int width, int height, ServerController controller) {
         super(title, width, height);
         this.controller = controller;
         controller.messageServer.addPropertyChangeListener(this);

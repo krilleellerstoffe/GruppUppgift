@@ -1,6 +1,5 @@
-package client;
+package UI.client;
 
-import UI.MRecipientsFrame;
 import controller.client.ClientController;
 import model.Message;
 import model.User;
@@ -18,8 +17,8 @@ import java.util.ArrayList;
 public class ClientConsole extends JPanel implements PropertyChangeListener {
 
   private ClientController controller;
-  private ArrayList<User> connectedUsers = new ArrayList<User>();
-  private ArrayList<Contact> contacts = new ArrayList<Contact>();
+  private ArrayList<User> connectedUsers = new ArrayList<>();
+  private ArrayList<User> contacts = new ArrayList<>();
   private JFileChooser fileChooser = new JFileChooser();
   private JTextArea inputWindow = new JTextArea("Write a message...");
   private JButton sendButton = new JButton("send");

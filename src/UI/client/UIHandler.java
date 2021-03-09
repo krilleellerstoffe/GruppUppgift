@@ -1,4 +1,4 @@
-package UI;
+package UI.client;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -24,7 +24,7 @@ public class UIHandler {
 
 
     public void logIn(String username, ImageIcon imageIcon) {
-        controller.login(username, imageIcon);
+        //controller.login(username, imageIcon);
     }
 
 }

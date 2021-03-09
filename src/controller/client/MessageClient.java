@@ -11,70 +11,64 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MessageClient implements Runnable {
 
+    Thread thread = new Thread(this);
     private Socket socket;
     private ClientController controller;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
-    private boolean connected;
-    private boolean isAvailable;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+    private User user;
 
     public MessageClient (String ipAddress, int port) {
         try {
             socket = new Socket(ipAddress, port);
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
-            isAvailable = true;
         } catch (IOException e) {
-            isAvailable = false;
-            return;
+            e.printStackTrace();
         }
-        Thread thread = new Thread(this);
+    }
+
+    public void connect(User user) {
+        this.user = user;
         thread.start();
     }
 
     @Override
     public void run() {
-
         try {
-            String userName = JOptionPane.showInputDialog("Enter Username");
-            User user = new User(userName);
             oos.writeObject(user);
             oos.flush();
             String response = (String) ois.readObject();
-            JOptionPane.showMessageDialog(null, response+ " connected");
-            connected = true;
-            String input = JOptionPane.showInputDialog("Enter message");
-            String to = JOptionPane.showInputDialog("To whom?");
-            User[] recipients = new User[1];
-            recipients[0] = new User(to);
-            send(new Message(input, user, recipients));
+            JOptionPane.showMessageDialog(null, response + " connected");
             listen();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            connected = false;
-            return;
+        } finally {
+            disconnect();
         }
-
     }
+
     public void listen() {
+
+        try {
         while (true){
-            Message message = null;
-            try {
+                Message message;
                 message = (Message) ois.readObject();
-                if(message.getText().equals("ConnectedUsers")) {
+                if(message.getSender().getUserName().equals("Server")) {
                     User[] connectedUsers = message.getRecipients();
                     changes.firePropertyChange("connectedUsers", null, connectedUsers);
-                }else {
+                }
+                else {
                     changes.firePropertyChange("message", null, message);
                 }
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
             }
-
+        }catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
     public void send (Message message) {
@@ -87,16 +81,8 @@ public class MessageClient implements Runnable {
 
     }
 
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
   public void disconnect() {
-      if (connected) {
+      if (socket!=null) {
           try {
               socket.close();
           } catch (IOException ioException) {
@@ -111,4 +97,5 @@ public class MessageClient implements Runnable {
     public void setClientController(ClientController controller) {
         this.controller = controller;
     }
+
 }

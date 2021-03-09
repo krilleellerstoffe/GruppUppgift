@@ -1,6 +1,6 @@
 package view.panels;
 
-import controller.Controller;
+import controller.server.ServerController;
 import view.Viewer;
 
 import javax.swing.*;
@@ -13,9 +13,9 @@ public class Menu extends Viewer {
     private JTextField ip;
     private JButton serverBtn;
     private JButton connectBtn;
-    private Controller controller;
+    private ServerController controller;
 
-    public Menu(String title, int width, int height, Controller controller) {
+    public Menu(String title, int width, int height, ServerController controller) {
         super(title, width, height);
         this.controller = controller;
         add(content());
@@ -35,11 +35,6 @@ public class Menu extends Viewer {
         ip.setText("localhost");
         ip.setHorizontalAlignment(JTextField.CENTER);
 
-        inner.add(ip);
-        connectBtn = new JButton("Connect");
-        connectBtn.addActionListener(action);
-        inner.add(connectBtn);
-
         serverBtn = new JButton("Run Server");
         serverBtn.addActionListener(action);
         inner.add(serverBtn);
@@ -50,9 +45,9 @@ public class Menu extends Viewer {
 
     public class Action implements ActionListener {
 
-        private Controller controller;
+        private ServerController controller;
 
-        public Action(Controller controller) {
+        public Action(ServerController controller) {
             this.controller = controller;
         }
 
@@ -65,17 +60,6 @@ public class Menu extends Viewer {
                     server.show();
                 }else{
                     JOptionPane.showMessageDialog(null, "Couldn't start server, might already be running.");
-                }
-            }
-            if (e.getSource().equals(connectBtn)) {
-
-                if (controller.connect(ip.getText())) {
-                    Viewer cl = new ClientLog("Client Log", 500, 400);
-                    int x = (Toolkit.getDefaultToolkit().getScreenSize().width-cl.getWidth());
-                    cl.location(x, 300);
-                    cl.show();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Connection to " + ip.getText() + " failed.");
                 }
             }
         }

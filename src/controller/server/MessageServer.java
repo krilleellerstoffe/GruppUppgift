@@ -1,6 +1,5 @@
 package controller.server;
 
-import controller.Controller;
 import model.Message;
 import model.MessageManager;
 import model.User;
@@ -22,11 +21,11 @@ public class MessageServer implements Runnable{
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private ServerSocket serverSocket;
     public Thread server = new Thread(this);
-    private Controller controller;
+    private ServerController controller;
     private boolean running;
 
 
-     public MessageServer (MessageManager messageManager, int port, Controller controller) {
+     public MessageServer (MessageManager messageManager, int port, ServerController controller) {
          this.controller = controller;
          this.messageManager = messageManager;
          this.connectedClients = new ConnectedClients();
