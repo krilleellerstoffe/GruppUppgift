@@ -3,6 +3,7 @@ package view.client;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+import client.ClientConsole;
 import controller.client.ClientController;
 
 
@@ -22,9 +23,7 @@ public class UIHandler {
         clientConsole = new ClientConsole(controller);
     }
 
-
     public void logIn(String username, ImageIcon imageIcon) {
         //controller.login(username, imageIcon);
     }
-
 }
