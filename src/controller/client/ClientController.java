@@ -1,19 +1,12 @@
 package controller.client;
 
-import view.client.ClientConsole;
-import view.client.UIHandler;
 import model.Message;
 import model.User;
+import view.client.UIHandler;
 
 import javax.swing.*;
+import java.io.*;
 import java.util.ArrayList;
-import java.io.BufferedOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 public class ClientController {
 
@@ -27,7 +20,7 @@ public class ClientController {
     private ArrayList<User> connectedUsers;
     private MessageClient messageClient;
     public User user;
-    private ClientConsole ui;
+    private client.ClientConsole ui;
     private UIHandler UI;
 
     public ClientController() {
