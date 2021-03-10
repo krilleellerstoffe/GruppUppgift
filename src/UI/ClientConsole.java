@@ -1,4 +1,4 @@
-package client;
+package UI;
 
 import UI.MRecipientsFrame;
 import controller.client.ClientController;
@@ -19,7 +19,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
 
   private ClientController controller;
   private ArrayList<User> connectedUsers = new ArrayList<User>();
-  private ArrayList<Contact> contacts = new ArrayList<Contact>();
+  private ArrayList<User> contacts = new ArrayList<User>();
   private JFileChooser fileChooser = new JFileChooser();
   private JTextArea inputWindow = new JTextArea("Write a message...");
   private JButton sendButton = new JButton("send");
@@ -44,6 +44,12 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
   }
 
   private void setupComponents() {
+    JFrame frame = new JFrame();
+    frame.setTitle("Chat console");
+    frame.setBounds(100,100,820,600);
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.setVisible(true);
+    frame.add(this);
     JPanel eastPanel = new JPanel(new BorderLayout());
     add(eastPanel, BorderLayout.EAST);
     eastPanel.setPreferredSize(new Dimension(800, 1000));
@@ -88,6 +94,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
     sendButton.addActionListener(listener);
     logoutButton.addActionListener(listener);
     addFileButton.addActionListener(listener);
+    addReceiverButton.addActionListener(listener);
 
     inputWindow.addFocusListener(new FocusListener() {
       public void focusGained(FocusEvent e) {
@@ -131,6 +138,7 @@ public class ClientConsole extends JPanel implements PropertyChangeListener {
           JOptionPane.showMessageDialog(null, "Image " + fileChooser.getSelectedFile().getPath() + "successfully uploaded");
         }
       } else if (e.getSource() == addReceiverButton) {
+        new MRecipientsFrame(controller);
       }
     }
   }

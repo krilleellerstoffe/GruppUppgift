@@ -1,7 +1,8 @@
 package controller.client;
 
-import client.ClientConsole;
+
 import controller.client.MessageClient;
+import controller.server.MessageServer;
 import model.Message;
 import model.User;
 import UI.*;
@@ -30,6 +31,7 @@ public class ClientController {
     public User user;
     private ClientConsole ui;
     private UIHandler UI;
+
 
     public ClientController() {
         messageClient = new MessageClient(SERVERADDRESS, PORT);
@@ -118,7 +120,12 @@ public class ClientController {
         System.exit(0);
     }
 
-    public void sendMessage(String text, String fileName, String[] recipients) {
+    public void login(String username, ImageIcon img) {
+        user = new User(username, img);
+       // MessageServer.connect(user);
+    }
+
+    public void sendMessage1(String text, String fileName, String[] recipients) {
         User[] recipientList = new User[100];
         for (int i = 0; i < recipients.length; i++) {
             User u = new User(recipients[i]);

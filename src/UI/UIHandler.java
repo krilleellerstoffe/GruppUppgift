@@ -11,11 +11,14 @@ public class UIHandler {
     private ClientController controller;
     private ClientConsole clientConsole;
 
+
+
     public UIHandler(ClientController controller) {
         this.controller = controller;
 
         JFrame login = new LoginFrame(this);
         login.setVisible(true);
+
     }
 
     public void showMainWindow() {
