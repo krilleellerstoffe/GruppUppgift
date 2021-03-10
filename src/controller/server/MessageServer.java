@@ -29,7 +29,7 @@ public class MessageServer implements Runnable{
          this.connectedClients = new ConnectedClients();
          try {
              serverSocket = new ServerSocket(port);
-             System.out.println(serverSocket + " is now running!");
+             propertyChangeSupport.firePropertyChange("value", null, " Server running");
              running = true;
          } catch (IOException e) {
              running = false;
@@ -53,16 +53,14 @@ public class MessageServer implements Runnable{
                  String response = user.getUserName();
                  oos.writeObject(response);
                  oos.flush();
-                 ClientHandler clientHandler = new ClientHandler(socket, ois, oos, user);
+                 ClientHandler clientHandler = new ClientHandler(socket, ois, oos, user);//make sure same input/output streams are used
                  connectedClients.put(user, clientHandler);
+                 propertyChangeSupport.firePropertyChange("value", null, user.getUserName() + " connected");
                  clientHandler.start();
-
              } catch (IOException | ClassNotFoundException e) {
                  e.printStackTrace();
              }
          }
-
-
     }
 
     private class ClientHandler extends Thread {

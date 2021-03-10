@@ -91,6 +91,7 @@ public class MessageClient implements Runnable {
               ioException.printStackTrace();
           }
       }
+      System.exit(0);
   }
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changes.addPropertyChangeListener(listener);
