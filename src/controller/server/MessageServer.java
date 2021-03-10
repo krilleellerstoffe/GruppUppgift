@@ -123,14 +123,15 @@ public class MessageServer implements Runnable{
         User[] recipients = message.getRecipients();
         for (User user: recipients) {
                 ClientHandler clientHandler = connectedClients.get(user);
-                if (clientHandler!=null) {
+                propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + ": " + message.getText());
+                /*if (clientHandler!=null) {
                     clientHandler.send(message);
                     propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + ": " + message.getText());
                 }
                 else {
                     messageManager.storeMessage(user, message);
                     propertyChangeSupport.firePropertyChange("value", null, message.getSender().getUserName() + " to " + message.getRecipients()[0].getUserName() + " message stored");
-                }
+                }*/
             }
 
         }

@@ -69,7 +69,7 @@ public class Menu extends Viewer {
             }
             if (e.getSource().equals(connectBtn)) {
                 if (controller.connect(ip.getText())) {
-                    Viewer cl = new ClientLog("Client Log", 500, 400);
+                    Viewer cl = new Login("Client Log", 700, 500);
                     int x = (Toolkit.getDefaultToolkit().getScreenSize().width-cl.getWidth());
                     cl.setLocation(x, 300);
                     cl.show();
