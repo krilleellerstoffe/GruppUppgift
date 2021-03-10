@@ -61,7 +61,7 @@ public class ServerLog extends Viewer implements PropertyChangeListener, ActionL
         go = new JButton("GO");
         go.addActionListener(this);
         panel1.add(go);
-        add(scrollPane);
+        //add(scrollPane);
         panel.add(panel1);
         update();
         return panel;
@@ -74,6 +74,7 @@ public class ServerLog extends Viewer implements PropertyChangeListener, ActionL
         log.setListData(messages.toArray());
         log.setFont(new Font("Serif", Font.BOLD, 14));
         log.setBackground(Color.lightGray);
+        add(scrollPane);
         panel.add(log, layout.SOUTH);
         scrollPane.setViewportView(log);
     }

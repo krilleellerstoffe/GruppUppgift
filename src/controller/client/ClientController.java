@@ -18,8 +18,8 @@ public class ClientController {
     private static final String SERVERADDRESS = "localhost";
     private static final int PORT = 2555;
 
-    private static final String FILEPATH_CONTACTS = "LogFile/contacts.dat";
-    private static final String FILEPATH_CONTACTS_FOLDER = "LogFile";
+    private static final String FILEPATH_CONTACTS = "contacts.dat";
+    private static final String FILEPATH_CONTACTS_FOLDER = "files";
 
     private ArrayList<User> contacts;
     private ArrayList<User> connectedUsers;
@@ -45,7 +45,7 @@ public class ClientController {
             folders.mkdirs();
         }
 
-        File contact = new File(FILEPATH_CONTACTS);
+        File contact = new File(FILEPATH_CONTACTS_FOLDER + "/" + FILEPATH_CONTACTS);
         if (contact.isFile()) {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(contact));
